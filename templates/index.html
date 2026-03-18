@@ -6,23 +6,22 @@
         <div>
             <span class="eyebrow">화물 차량 리스 전문 상담</span>
             <h1>빠른 상담으로<br>화물 차량 리스 조건을<br>한 번에 확인하세요</h1>
-            <p class="hero-text">이용 목적과 차량 조건만 남겨주시면 개입법인 화물 차량 리스/렌탈부터, 특장 상담까지 빠르게 안내드립니다.</p>
+            <p class="hero-text">이용 목적과 차량 조건만 남겨주시면 개인·법인 화물 차량 리스/렌탈부터 특장 상담까지 빠르게 안내드립니다.</p>
             <div class="hero-actions">
                 <a class="btn btn-primary" href="#consult">빠른 상담 신청</a>
                 <a class="btn btn-secondary" href="#features">서비스 보기</a>
             </div>
+            <div class="hero-image-wrap">
+                <img src="{{ url_for('static', filename='images/car_kind_img1.png') }}" alt="화물 차량 리스 상담 대표 이미지" class="hero-truck-image">
+            </div>
         </div>
         <div class="hero-card consult-focus-card">
             <div class="metric-list">
-                <div class="metric"><strong>1. 저신용자 100% 차량 구입 지원</strong><span>신차구입,중고차 구입 어려우세요? 저희가 도와 드립니다. 저신용자도 모두 차량 출고 가능합니다.</span></div>
-                <div class="metric"><strong>2. 화물 차량리스 설명</strong><span>업종과 운행 목적에 맞는 리스 구조를 정리해 드립니다.</span></div>
-                <div class="metric"><strong>3. 이용자명 운용리스 설명</strong><span>개인사업자·법인 고객 기준의 운용리스 진행 방식을 안내합니다.</span></div>
-                <div class="metric"><strong>4. 초기 비용 낮음 안내</strong><span>보증금·선납금 부담을 낮추는 방향으로 상담합니다.</span></div>
-                <div class="metric"><strong>5. All in one 서비스</strong><span>차량 본체와 특장 작업까지 한 번에 연결 가능한 구조를 설명합니다.</span></div>
-            </div>
-            <div class="truck-image-slot">
-                <img src="{{ url_for('static', filename='images/car_kind_img1.png') }}" alt="화물 차량 종류 안내 이미지 1">
-                <img src="{{ url_for('static', filename='images/car_kind_img2.png') }}" alt="화물 차량 종류 안내 이미지 2">
+                <div class="metric"><strong>맞춤 상담으로 차량 구입 지원</strong><span>신차·중고차 진행이 어려운 고객도 출고 가능 여부와 상담 방향을 빠르게 안내해 드립니다.</span></div>
+                <div class="metric"><strong>화물 차량 리스 구조 설명</strong><span>업종과 운행 목적에 맞는 리스 구조를 이해하기 쉽게 정리해 드립니다.</span></div>
+                <div class="metric"><strong>이용자 맞춤 운용리스 안내</strong><span>개인사업자·법인 고객 기준에 맞춰 운용리스 진행 방식을 설명합니다.</span></div>
+                <div class="metric"><strong>초기 비용 부담 완화</strong><span>보증금·선납금 부담을 낮추는 방향으로 조건을 함께 검토합니다.</span></div>
+                <div class="metric"><strong>차량부터 특장까지 원스톱</strong><span>차량 본체와 특장 작업까지 한 번에 연결 가능한 상담 구조를 제공합니다.</span></div>
             </div>
         </div>
     </div>
@@ -37,18 +36,21 @@
         </div>
         <div class="card-grid three">
             <article class="info-card">
-                <h3>이용자 명의리스 안내</h3>
-                <p>이용자명의 리스로 개인/법인사업자<br>
-                1. 할부 대비 초기 비용이 저렴.<br>
-                2. 부가세조기 환급으로 운영비용 확보가능<br>
-                3. 특장까지 포함하여 월리스비 산정<br>
-                4. 아바사자, 배 넘버 장착 가능</p>
+                <h3>이용자 명의 리스 안내</h3>
+                <ol class="info-list">
+                    <li>할부 대비 초기 비용 부담을 낮춘 리스 구조를 안내합니다.</li>
+                    <li>부가세 조기 환급에 따른 운영비 확보 방안을 함께 설명합니다.</li>
+                    <li>특장 비용까지 포함한 월 리스료 산정이 가능합니다.</li>
+                    <li>영업용 번호판과 특장 조건까지 연계해 상담합니다.</li>
+                </ol>
             </article>
             <article class="info-card">
                 <h3>운영 관리</h3>
-                <p>1. VIP급 관리 서비스로 차량 출고 전후 모니터링<br>
-                2. 매년 보험료 갱신 안내 및 비교 견적 제공<br>
-                3. GPS 를 활용한 차량 관리 지원(법인 차량 / GPS FLEET 서비스 가입시)</p>
+                <ol class="info-list">
+                    <li>차량 출고 전후 과정을 꼼꼼하게 모니터링합니다.</li>
+                    <li>매년 보험료 갱신 시점에 맞춰 비교 견적을 안내합니다.</li>
+                    <li>법인 차량은 GPS 기반 운행 관리 서비스 연계도 지원합니다.</li>
+                </ol>
             </article>
             <article class="info-card">
                 <h3>빠른 상담 연결</h3>
@@ -63,8 +65,8 @@
         <div>
             <span class="eyebrow">TruckLead 상담신청</span>
             <h2>화물 차량 상담을 남겨주시면 빠르게 연락드립니다</h2>
-            <p>1. 1톤 차량 전문가가 상담(차량,특장,비교 보험)해 드립니다.<br>
-            2. 3.5톤, 5톤, 11톤 등 큰톤수 화물차도 특장을 포함 리스 청구 도와 드립니다.</p>
+            <p>1톤 차량은 차량·특장·보험 비교까지 전문 상담으로 도와드립니다.<br>
+            3.5톤, 5톤, 11톤 등 대형 톤수 화물차도 특장을 포함한 리스 진행을 깔끔하게 안내해 드립니다.</p>
         </div>
         {% include "partials/consult_form.html" %}
     </div>
