@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}상담 신청 완료{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container center-box">
+        <div class="info-card thank-you-card">
+            <span class="eyebrow">접수 완료</span>
+            <h2>상담 신청이 정상적으로 접수되었습니다</h2>
+            <p>남겨주신 정보를 확인한 뒤 빠르게 연락드리겠습니다.</p>
+            <a href="{{ url_for('index') }}" class="btn btn-primary">메인으로 돌아가기</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

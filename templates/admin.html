@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}관리자 | TruckLead{% endblock %}
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="section-head row-between">
+            <div>
+                <span class="eyebrow">Admin</span>
+                <h2>리드 관리</h2>
+            </div>
+            <div class="stats-inline">
+                <div class="stat-box"><span>총 리드</span><strong>{{ total_leads }}</strong></div>
+                <div class="stat-box"><span>신규</span><strong>{{ new_leads }}</strong></div>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>접수일시</th>
+                        <th>이름</th>
+                        <th>연락처</th>
+                        <th>지역</th>
+                        <th>업종</th>
+                        <th>차종</th>
+                        <th>예산</th>
+                        <th>연락시간</th>
+                        <th>유입</th>
+                        <th>메모</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lead in leads %}
+                    <tr>
+                        <td>{{ lead.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>{{ lead.name }}</td>
+                        <td>{{ lead.phone }}</td>
+                        <td>{{ lead.region }}</td>
+                        <td>{{ lead.business_type }}</td>
+                        <td>{{ lead.vehicle_type }}</td>
+                        <td>{{ lead.budget or '-' }}</td>
+                        <td>{{ lead.contact_time or '-' }}</td>
+                        <td>{{ lead.utm_source or '-' }}/{{ lead.utm_campaign or '-' }}</td>
+                        <td>{{ lead.message or '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="10" class="empty">아직 접수된 리드가 없습니다.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
