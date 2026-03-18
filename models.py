@@ -8,6 +8,11 @@ db = SQLAlchemy()
 
 class Lead(db.Model):
     __tablename__ = "leads"
+    __table_args__ = (
+        db.Index("ix_leads_created_at", "created_at"),
+        db.Index("ix_leads_status", "status"),
+        db.Index("ix_leads_landing_page", "landing_page"),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -20,7 +25,7 @@ class Lead(db.Model):
     budget = db.Column(db.String(100), nullable=True)
     contact_time = db.Column(db.String(100), nullable=True)
     message = db.Column(db.Text, nullable=True)
-    status = db.Column(db.String(50), default="new", nullable=False)
+    status = db.Column(db.String(50), default="신규", nullable=False)
     utm_source = db.Column(db.String(100), nullable=True)
     utm_medium = db.Column(db.String(100), nullable=True)
     utm_campaign = db.Column(db.String(100), nullable=True)

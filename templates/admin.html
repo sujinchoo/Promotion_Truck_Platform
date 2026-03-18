@@ -14,6 +14,7 @@
                     <div class="stat-box"><span>신규</span><strong>{{ new_leads }}</strong></div>
                     <div class="stat-box"><span>모바일</span><strong>{{ mobile_leads }}</strong></div>
                 </div>
+                <button type="button" class="btn btn-primary" id="status-update-button">업데이트</button>
                 <a class="btn btn-secondary" href="{{ url_for('admin_logout') }}">로그아웃</a>
             </div>
         </div>
@@ -29,6 +30,7 @@
                         <th>지역</th>
                         <th>업종</th>
                         <th>차종</th>
+                        <th>상태</th>
                         <th>예산</th>
                         <th>연락시간</th>
                         <th>유입</th>
@@ -38,7 +40,7 @@
                 </thead>
                 <tbody>
                     {% for lead in leads %}
-                    <tr>
+                    <tr data-lead-row="{{ lead.id }}">
                         <td>{{ lead.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
                         <td>{{ '모바일광고' if lead.landing_page == 'mobile_ad' else '메인' }}</td>
                         <td>{{ lead.name }}</td>
@@ -46,6 +48,17 @@
                         <td>{{ lead.region }}</td>
                         <td>{{ lead.business_type }}</td>
                         <td>{{ lead.vehicle_type }}</td>
+                        <td>
+                            <select
+                                class="status-select {{ status_class_map.get(lead.status, 'status-new') }}"
+                                data-lead-id="{{ lead.id }}"
+                                data-original-status="{{ lead.status }}"
+                            >
+                                {% for status in status_options %}
+                                <option value="{{ status }}" {% if lead.status == status %}selected{% endif %}>{{ status }}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
                         <td>{{ lead.budget or '-' }}</td>
                         <td>{{ lead.contact_time or '-' }}</td>
                         <td>{{ lead.utm_source or '-' }}/{{ lead.utm_campaign or '-' }}</td>
@@ -54,7 +67,7 @@
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="12" class="empty">아직 접수된 리드가 없습니다.</td>
+                        <td colspan="13" class="empty">아직 접수된 리드가 없습니다.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -62,4 +75,57 @@
         </div>
     </div>
 </section>
+<script>
+    const statusClassMap = {{ status_class_map|tojson }};
+    const statusSelects = Array.from(document.querySelectorAll('.status-select'));
+    const updateButton = document.getElementById('status-update-button');
+
+    function syncStatusClass(select) {
+        select.className = 'status-select ' + (statusClassMap[select.value] || 'status-new');
+    }
+
+    statusSelects.forEach((select) => {
+        syncStatusClass(select);
+        select.addEventListener('change', () => syncStatusClass(select));
+    });
+
+    updateButton?.addEventListener('click', async () => {
+        const updates = statusSelects
+            .filter((select) => select.value !== select.dataset.originalStatus)
+            .map((select) => ({ id: Number(select.dataset.leadId), status: select.value }));
+
+        if (!updates.length) {
+            window.alert('변경된 상태가 없습니다.');
+            return;
+        }
+
+        updateButton.disabled = true;
+        updateButton.textContent = '저장 중...';
+
+        try {
+            const response = await fetch('{{ url_for("update_lead_statuses") }}', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ updates })
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || '상태 저장에 실패했습니다.');
+            }
+
+            statusSelects.forEach((select) => {
+                select.dataset.originalStatus = select.value;
+                syncStatusClass(select);
+            });
+            window.alert(data.message || '업데이트 완료');
+            window.location.reload();
+        } catch (error) {
+            window.alert(error.message || '상태 저장 중 오류가 발생했습니다.');
+        } finally {
+            updateButton.disabled = false;
+            updateButton.textContent = '업데이트';
+        }
+    });
+</script>
 {% endblock %}

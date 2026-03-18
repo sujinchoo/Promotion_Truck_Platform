@@ -1,18 +1,34 @@
 from functools import wraps
 
-from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
+from flask import Flask, abort, flash, jsonify, redirect, render_template, request, session, url_for
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import load_only
 
 from config import Config
 from models import Lead, db
+from telegram_service import TelegramNotifier
 
 
 app = Flask(__name__)
 app.config.from_object(Config)
 db.init_app(app)
+telegram_notifier = TelegramNotifier(
+    app.config.get("TELEGRAM_BOT_TOKEN"),
+    app.config.get("TELEGRAM_CHAT_ID"),
+    app.config.get("TELEGRAM_NOTIFICATIONS_ENABLED", True),
+)
 
 
+STATUS_OPTIONS = ["신규", "통화중", "진행중", "연결안됨", "거절", "계약완료"]
+STATUS_CLASS_MAP = {
+    "신규": "status-new",
+    "통화중": "status-calling",
+    "진행중": "status-progress",
+    "연결안됨": "status-unreachable",
+    "거절": "status-rejected",
+    "계약완료": "status-contracted",
+}
 LEAD_COLUMNS = {
     "created_at": "TIMESTAMP",
     "landing_page": "VARCHAR(50) DEFAULT 'main' NOT NULL",
@@ -24,7 +40,7 @@ LEAD_COLUMNS = {
     "budget": "VARCHAR(100)",
     "contact_time": "VARCHAR(100)",
     "message": "TEXT",
-    "status": "VARCHAR(50) DEFAULT 'new' NOT NULL",
+    "status": "VARCHAR(50) DEFAULT '신규' NOT NULL",
     "utm_source": "VARCHAR(100)",
     "utm_medium": "VARCHAR(100)",
     "utm_campaign": "VARCHAR(100)",
@@ -32,11 +48,7 @@ LEAD_COLUMNS = {
     "ip_address": "VARCHAR(64)",
     "agreement": "BOOLEAN DEFAULT FALSE NOT NULL",
 }
-
-
 REQUIRED_FIELDS = ["name", "phone", "region", "business_type", "vehicle_type"]
-
-
 MOBILE_VEHICLE_OPTIONS = [
     "1톤 카고",
     "1톤 냉동탑차",
@@ -59,6 +71,8 @@ def ensure_database_schema():
             for column_name, column_definition in LEAD_COLUMNS.items():
                 if column_name not in existing_columns:
                     db.session.execute(text(f"ALTER TABLE leads ADD COLUMN {column_name} {column_definition}"))
+
+            db.session.execute(text("UPDATE leads SET status = '신규' WHERE status IS NULL OR status = '' OR status = 'new'"))
             db.session.commit()
         except SQLAlchemyError:
             db.session.rollback()
@@ -66,6 +80,16 @@ def ensure_database_schema():
 
 
 ensure_database_schema()
+
+
+@app.context_processor
+def inject_shared_context():
+    return {
+        "vehicle_options": MOBILE_VEHICLE_OPTIONS,
+        "hero_image_path": app.config["HERO_IMAGE_PATH"],
+        "status_options": STATUS_OPTIONS,
+        "status_class_map": STATUS_CLASS_MAP,
+    }
 
 
 def admin_required(view_func):
@@ -80,7 +104,11 @@ def admin_required(view_func):
 
 def render_page(template_name, **context):
     show_header = context.pop("show_header", True)
-    return render_template(template_name, vehicle_options=MOBILE_VEHICLE_OPTIONS, show_header=show_header, **context)
+    return render_template(template_name, show_header=show_header, **context)
+
+
+def resolve_destination(landing_page):
+    return "mobile_landing" if landing_page == "mobile_ad" else "index"
 
 
 @app.route("/")
@@ -105,20 +133,20 @@ def privacy_consent():
 
 @app.route("/lead", methods=["POST"])
 def create_lead():
+    landing_page = request.form.get("landing_page", "main").strip() or "main"
+    destination = resolve_destination(landing_page)
     form_data = {field: request.form.get(field, "").strip() for field in REQUIRED_FIELDS}
 
     if not request.form.get("privacy_agree"):
         flash("개인정보 수집·이용 및 통합 상담 안내에 동의해 주세요.", "error")
-        destination = "mobile_landing" if request.form.get("landing_page") == "mobile_ad" else "index"
         return redirect(url_for(destination) + "#consult")
 
     if not all(form_data.values()):
         flash("필수 항목을 모두 입력해 주세요.", "error")
-        destination = "mobile_landing" if request.form.get("landing_page") == "mobile_ad" else "index"
         return redirect(url_for(destination) + "#consult")
 
     lead = Lead(
-        landing_page=request.form.get("landing_page", "main").strip() or "main",
+        landing_page=landing_page,
         name=form_data["name"],
         phone=form_data["phone"],
         region=form_data["region"],
@@ -127,6 +155,7 @@ def create_lead():
         budget=request.form.get("budget", "").strip(),
         contact_time=request.form.get("contact_time", "").strip(),
         message=request.form.get("message", "").strip(),
+        status="신규",
         utm_source=request.form.get("utm_source", "").strip(),
         utm_medium=request.form.get("utm_medium", "").strip(),
         utm_campaign=request.form.get("utm_campaign", "").strip(),
@@ -136,6 +165,7 @@ def create_lead():
     )
     db.session.add(lead)
     db.session.commit()
+    telegram_notifier.send_new_lead_notification(lead)
 
     return redirect(url_for("thank_you"))
 
@@ -174,9 +204,31 @@ def admin_logout():
 @app.route("/admin")
 @admin_required
 def admin():
-    leads = Lead.query.order_by(Lead.created_at.desc()).all()
+    leads = (
+        Lead.query.options(
+            load_only(
+                Lead.id,
+                Lead.created_at,
+                Lead.landing_page,
+                Lead.name,
+                Lead.phone,
+                Lead.region,
+                Lead.business_type,
+                Lead.vehicle_type,
+                Lead.budget,
+                Lead.contact_time,
+                Lead.utm_source,
+                Lead.utm_campaign,
+                Lead.agreement,
+                Lead.message,
+                Lead.status,
+            )
+        )
+        .order_by(Lead.created_at.desc())
+        .all()
+    )
     total_leads = len(leads)
-    new_leads = sum(1 for lead in leads if lead.status == "new")
+    new_leads = sum(1 for lead in leads if lead.status == "신규")
     mobile_leads = sum(1 for lead in leads if lead.landing_page == "mobile_ad")
     return render_page(
         "admin.html",
@@ -185,6 +237,36 @@ def admin():
         new_leads=new_leads,
         mobile_leads=mobile_leads,
     )
+
+
+@app.route("/admin/leads/status", methods=["POST"])
+@admin_required
+def update_lead_statuses():
+    payload = request.get_json(silent=True) or {}
+    updates = payload.get("updates", [])
+    if not updates:
+        return jsonify({"message": "변경된 상태가 없습니다."}), 400
+
+    updated_ids = []
+    try:
+        for item in updates:
+            lead_id = item.get("id")
+            status = item.get("status")
+            if status not in STATUS_OPTIONS:
+                return jsonify({"message": f"허용되지 않는 상태값입니다: {status}"}), 400
+
+            lead = db.session.get(Lead, lead_id)
+            if not lead:
+                continue
+            lead.status = status
+            updated_ids.append(lead_id)
+
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"message": "상태 저장 중 오류가 발생했습니다."}), 500
+
+    return jsonify({"message": "업데이트 완료", "updated_ids": updated_ids})
 
 
 @app.route("/health")
