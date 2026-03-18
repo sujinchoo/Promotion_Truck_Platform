@@ -32,6 +32,7 @@
                         <th>예산</th>
                         <th>연락시간</th>
                         <th>유입</th>
+                        <th>동의</th>
                         <th>메모</th>
                     </tr>
                 </thead>
@@ -48,11 +49,12 @@
                         <td>{{ lead.budget or '-' }}</td>
                         <td>{{ lead.contact_time or '-' }}</td>
                         <td>{{ lead.utm_source or '-' }}/{{ lead.utm_campaign or '-' }}</td>
+                        <td>{{ '동의' if lead.agreement else '미동의' }}</td>
                         <td>{{ lead.message or '-' }}</td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="11" class="empty">아직 접수된 리드가 없습니다.</td>
+                        <td colspan="12" class="empty">아직 접수된 리드가 없습니다.</td>
                     </tr>
                     {% endfor %}
                 </tbody>

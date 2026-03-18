@@ -54,6 +54,8 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
 .hero-grid { grid-template-columns: 1.05fr 0.95fr; align-items: stretch; }
 .hero h1 { font-size: clamp(2.2rem, 4vw, 3.5rem); line-height: 1.15; margin: 10px 0 16px; }
 .hero-text { color: var(--muted); max-width: 640px; }
+.hero-image-wrap { margin-top: 20px; max-width: 640px; }
+.hero-truck-image { width: 100%; height: auto; display: block; border-radius: 22px; border: 1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(238,245,255,0.96)); box-shadow: var(--shadow); }
 .eyebrow {
     display: inline-block;
     padding: 6px 12px;
@@ -91,23 +93,9 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
     background: var(--surface-2);
     border: 1px solid var(--border);
 }
-.metric span, .truck-image-slot small { display: block; font-size: 0.92rem; color: var(--muted); }
+.metric span { display: block; font-size: 0.92rem; color: var(--muted); }
 .metric strong { display: block; margin-bottom: 8px; font-size: 1.02rem; }
-.truck-image-slot {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-}
-.truck-image-slot img {
-    width: 100%;
-    height: 100%;
-    min-height: 220px;
-    object-fit: cover;
-    border-radius: 18px;
-    border: 1px solid var(--border);
-    background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(238,245,255,0.95));
-    box-shadow: var(--shadow);
-}
+
 
 .section { padding: 44px 0; }
 .compact-section { padding: 32px 0; }
@@ -117,6 +105,9 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
 .card-grid.two { grid-template-columns: repeat(2, 1fr); }
 .card-grid.three { grid-template-columns: repeat(3, 1fr); }
 .info-card { padding: 24px; }
+.info-list { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 12px; counter-reset: info-step; }
+.info-list li { position: relative; padding-left: 46px; color: var(--muted); }
+.info-list li::before { counter-increment: info-step; content: counter(info-step); position: absolute; left: 0; top: 0; width: 30px; height: 30px; border-radius: 999px; background: var(--surface-2); border: 1px solid var(--border); color: var(--primary-dark); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; }
 .accent-card { background: linear-gradient(180deg, #ffffff 0%, #f1f6ff 100%); }
 
 .consult-grid { grid-template-columns: 0.72fr 1.28fr; align-items: start; }
@@ -252,6 +243,4 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
     }
     .row-between, .header-inner, .header-actions { flex-direction: column; align-items: flex-start; }
     .hero { padding-top: 48px; }
-    .truck-image-slot { grid-template-columns: 1fr; }
-    .truck-image-slot img { min-height: 180px; }
 }

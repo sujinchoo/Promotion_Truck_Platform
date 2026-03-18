@@ -30,6 +30,7 @@ LEAD_COLUMNS = {
     "utm_campaign": "VARCHAR(100)",
     "referrer": "VARCHAR(255)",
     "ip_address": "VARCHAR(64)",
+    "agreement": "BOOLEAN DEFAULT FALSE NOT NULL",
 }
 
 
@@ -131,6 +132,7 @@ def create_lead():
         utm_campaign=request.form.get("utm_campaign", "").strip(),
         referrer=request.referrer,
         ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
+        agreement=request.form.get("privacy_agree") == "yes",
     )
     db.session.add(lead)
     db.session.commit()

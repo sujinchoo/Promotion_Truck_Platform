@@ -26,6 +26,7 @@ class Lead(db.Model):
     utm_campaign = db.Column(db.String(100), nullable=True)
     referrer = db.Column(db.String(255), nullable=True)
     ip_address = db.Column(db.String(64), nullable=True)
+    agreement = db.Column(db.Boolean, default=False, nullable=False)
 
     def to_dict(self):
         return {
@@ -45,4 +46,5 @@ class Lead(db.Model):
             "utm_medium": self.utm_medium,
             "utm_campaign": self.utm_campaign,
             "referrer": self.referrer,
+            "agreement": self.agreement,
         }
