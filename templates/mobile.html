@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}모바일 광고 랜딩 | TruckLead{% endblock %}
+{% block content %}
+<section class="hero mobile-hero compact-hero">
+    <div class="container narrow-container">
+        <span class="eyebrow">메타·인스타그램 광고 전용</span>
+        <h1>화물 차량 리스,<br>모바일에서 바로 상담 신청</h1>
+        <p class="hero-text">광고 유입 고객이 모바일에서 빠르게 읽고 바로 문의할 수 있도록 더 짧고 단순하게 구성한 전용 랜딩 페이지입니다.</p>
+        <div class="hero-actions stacked-mobile-actions">
+            <a class="btn btn-primary full-mobile" href="#consult">빠른 상담 신청</a>
+            <a class="btn btn-secondary full-mobile" href="#mobile-benefits">서비스 보기</a>
+        </div>
+    </div>
+</section>
+
+<section id="mobile-benefits" class="section compact-section">
+    <div class="container narrow-container card-grid one">
+        <article class="info-card">
+            <h3>낮은 초기 비용 중심 상담</h3>
+            <p>초기 비용 부담을 줄이는 방향으로 리스/운용리스 조건을 정리합니다.</p>
+        </article>
+        <article class="info-card">
+            <h3>차량 + 특장 한 번에</h3>
+            <p>화물 차량과 필요한 특장 작업까지 한 번에 연결할 수 있도록 안내합니다.</p>
+        </article>
+        <article class="info-card">
+            <h3>광고 유입 구분 저장</h3>
+            <p>모바일 랜딩에서 접수된 문의는 DB에 별도로 구분 저장되어 운영 시 추적이 쉽습니다.</p>
+        </article>
+    </div>
+</section>
+
+<section id="consult" class="section consult-section compact-section mobile-consult">
+    <div class="container narrow-container consult-grid single-column">
+        <div>
+            <span class="eyebrow">빠른 접수</span>
+            <h2>지금 정보만 남겨주시면 상담 드립니다</h2>
+            <p>메인 페이지의 상담 폼 구조를 그대로 재사용해 관리 포인트를 줄였습니다.</p>
+        </div>
+        {% with landing_page='mobile_ad' %}
+            {% include "partials/consult_form.html" %}
+        {% endwith %}
+    </div>
+</section>
+{% endblock %}
