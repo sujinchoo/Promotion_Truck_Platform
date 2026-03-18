@@ -40,7 +40,7 @@ a { color: inherit; text-decoration: none; }
     padding: 16px 0;
 }
 .brand { font-size: 1.2rem; font-weight: 800; color: var(--primary-dark); }
-nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; }
+nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap: wrap; }
 
 .hero {
     padding: 64px 0 32px;
@@ -77,7 +77,7 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; }
 .btn-primary:hover { background: var(--primary-dark); }
 .btn-secondary { background: white; color: var(--primary-dark); border-color: var(--border); }
 .btn.full { width: 100%; }
-.hero-card, .info-card, .lead-form, .stat-box {
+.hero-card, .info-card, .lead-form, .stat-box, .policy-card, .mobile-hook-card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 22px;
@@ -117,6 +117,7 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; }
 .card-grid.two { grid-template-columns: repeat(2, 1fr); }
 .card-grid.three { grid-template-columns: repeat(3, 1fr); }
 .info-card { padding: 24px; }
+.accent-card { background: linear-gradient(180deg, #ffffff 0%, #f1f6ff 100%); }
 
 .consult-grid { grid-template-columns: 0.72fr 1.28fr; align-items: start; }
 .single-column { grid-template-columns: 1fr; }
@@ -155,6 +156,16 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; }
     padding: 16px;
     color: var(--muted);
 }
+.consent-check {
+    margin-top: 14px;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--text);
+}
+.consent-check input { width: auto; }
 
 .flash-wrap { padding-top: 16px; }
 .flash {
@@ -190,6 +201,46 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; }
 .thank-you-card, .login-card { max-width: 620px; margin: 0 auto; }
 .stacked-mobile-actions, .full-mobile { width: 100%; }
 .mobile-hero .hero-actions { flex-direction: column; }
+.mobile-landing-shell {
+    background: radial-gradient(circle at top, rgba(19, 88, 182, 0.18), transparent 42%), linear-gradient(180deg, #f7fbff 0%, #e8f1ff 100%);
+}
+.mobile-hero-visual {
+    margin-top: 24px;
+    display: grid;
+    gap: 16px;
+}
+.mobile-hero-visual img {
+    width: 100%;
+    border-radius: 24px;
+    border: 1px solid rgba(19, 88, 182, 0.16);
+    box-shadow: 0 24px 50px rgba(19, 88, 182, 0.16);
+    background: linear-gradient(180deg, #fff, #edf4ff);
+}
+.visual-copy-card {
+    padding: 18px 20px;
+    background: rgba(255, 255, 255, 0.86);
+    border: 1px solid rgba(19, 88, 182, 0.12);
+    border-radius: 18px;
+}
+.visual-copy-card strong { display: block; margin-bottom: 6px; }
+.mobile-benefits-section { background: linear-gradient(180deg, #eef5ff 0%, #f8fbff 100%); }
+.mobile-benefits-head { text-align: left; }
+.mobile-hook-card {
+    padding: 22px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    background: linear-gradient(135deg, #1358b6 0%, #2d76d1 100%);
+    color: #ffffff;
+}
+.mobile-hook-card ul { margin: 10px 0 0; padding-left: 18px; }
+.mobile-hook-card li + li { margin-top: 6px; }
+.mobile-benefit-cards { gap: 16px; }
+.privacy-page h1 { margin: 12px 0 6px; }
+.policy-effective { color: var(--muted); margin-bottom: 20px; }
+.policy-card { padding: 28px; }
+.policy-card h2 { margin-top: 24px; }
 
 @media (max-width: 900px) {
     .hero-grid,
@@ -200,7 +251,6 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; }
         grid-template-columns: 1fr;
     }
     .row-between, .header-inner, .header-actions { flex-direction: column; align-items: flex-start; }
-    nav { flex-wrap: wrap; }
     .hero { padding-top: 48px; }
     .truck-image-slot { grid-template-columns: 1fr; }
     .truck-image-slot img { min-height: 180px; }

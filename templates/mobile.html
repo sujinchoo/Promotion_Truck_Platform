@@ -1,45 +1,70 @@
 {% extends "base.html" %}
 {% block title %}모바일 광고 랜딩 | TruckLead{% endblock %}
 {% block content %}
-<section class="hero mobile-hero compact-hero">
+<section class="hero mobile-hero compact-hero mobile-landing-shell">
     <div class="container narrow-container">
-        <span class="eyebrow">메타·인스타그램 광고 전용</span>
+        <span class="eyebrow">TruckLead 상담신청</span>
         <h1>화물 차량 리스,<br>모바일에서 바로 상담 신청</h1>
-        <p class="hero-text">이용 목적과 차량 조건만 남겨주시면 개입법인 화물 차량 리스/렌탈부터, 특장 상담까지 빠르게 안내드립니다.</p>
+        <p class="hero-text">씨앤제이컴퍼니 소속 상담 직원이 차량·특장·보험 비교 상담을 통합으로 안내해 드립니다. 필요한 정보만 남기면 빠르게 이어서 도와드립니다.</p>
         <div class="hero-actions stacked-mobile-actions">
             <a class="btn btn-primary full-mobile" href="#consult">빠른 상담 신청</a>
             <a class="btn btn-secondary full-mobile" href="#mobile-benefits">서비스 보기</a>
         </div>
+        <div class="mobile-hero-visual">
+            <div class="visual-copy-card">
+                <strong>모바일 최적화 상담 접수</strong>
+                <p>짧은 입력만으로 차량상담, 특장상담, 보험견적까지 통합 상담이 가능합니다.</p>
+            </div>
+            <img src="{{ url_for('static', filename='images/car_kind_img1.png') }}" alt="모바일 랜딩 화물 차량 상담 이미지">
+        </div>
     </div>
 </section>
 
-<section id="mobile-benefits" class="section compact-section">
-    <div class="container narrow-container card-grid one">
-        <article class="info-card">
-            <h3>이용자 명의리스 안내</h3>
-            <p>이용자명의 리스로 개인/법인사업자<br>
-            1. 할부 대비 초기 비용이 저렴.<br>
-            2. 부가세조기 환급으로 운영비용 확보가능<br>
-            3. 특장까지 포함하여 월리스비 산정<br>
-            4. 아바사자, 배 넘버 장착 가능</p>
-        </article>
-        <article class="info-card">
-            <h3>운영 관리</h3>
-            <p>1. VIP급 관리 서비스로 차량 출고 전후 모니터링<br>
-            2. 매년 보험료 갱신 안내 및 비교 견적 제공<br>
-            3. GPS 를 활용한 차량 관리 지원(법인 차량 / GPS FLEET 서비스 가입시)</p>
-        </article>
-        <article class="info-card">
-            <h3>빠른 상담 연결</h3>
-            <p>문의 접수 후 차량, 특장, 보험 비교까지 필요한 내용을 빠르게 정리하여 상담을 이어드립니다.</p>
-        </article>
+<section id="mobile-benefits" class="section compact-section mobile-benefits-section">
+    <div class="container narrow-container">
+        <div class="section-head mobile-benefits-head">
+            <span class="eyebrow">상담 전에 확인해 보세요</span>
+            <h2>한 번의 접수로 통합 상담까지 연결됩니다</h2>
+            <p>차량 상담만이 아니라 특장, 보험 비교견적, 운용리스 구조까지 한 번에 이어지는 흐름을 준비했습니다.</p>
+        </div>
+        <div class="mobile-hook-card">
+            <div>
+                <strong>지금 신청하면 이런 점이 좋습니다.</strong>
+                <ul>
+                    <li>고객 상황에 맞는 차종과 리스 구조를 빠르게 정리</li>
+                    <li>씨앤제이컴퍼니 동일 상담 인력이 상담 이력을 이어서 관리</li>
+                    <li>상담 신청 내용은 자동 저장되어 누락 없이 후속 안내</li>
+                </ul>
+            </div>
+            <a class="btn btn-primary" href="#consult">상담 바로 신청</a>
+        </div>
+        <div class="card-grid one mobile-benefit-cards">
+            <article class="info-card accent-card">
+                <h3>이용자 명의리스 안내</h3>
+                <p>이용자명의 리스로 개인/법인사업자<br>
+                1. 할부 대비 초기 비용이 저렴.<br>
+                2. 부가세조기 환급으로 운영비용 확보가능<br>
+                3. 특장까지 포함하여 월리스비 산정<br>
+                4. 아바사자, 배 넘버 장착 가능</p>
+            </article>
+            <article class="info-card accent-card">
+                <h3>운영 관리</h3>
+                <p>1. VIP급 관리 서비스로 차량 출고 전후 모니터링<br>
+                2. 매년 보험료 갱신 안내 및 비교 견적 제공<br>
+                3. GPS 를 활용한 차량 관리 지원(법인 차량 / GPS FLEET 서비스 가입시)</p>
+            </article>
+            <article class="info-card accent-card">
+                <h3>빠른 상담 연결</h3>
+                <p>문의 접수 후 차량, 특장, 보험 비교까지 필요한 내용을 빠르게 정리하여 상담을 이어드립니다.</p>
+            </article>
+        </div>
     </div>
 </section>
 
 <section id="consult" class="section consult-section compact-section mobile-consult">
     <div class="container narrow-container consult-grid single-column">
         <div>
-            <span class="eyebrow">빠른 접수</span>
+            <span class="eyebrow">TruckLead 상담신청</span>
             <h2>화물 차량 상담을 남겨주시면 빠르게 연락드립니다</h2>
             <p>1. 1톤 차량 전문가가 상담(차량,특장,비교 보험)해 드립니다.<br>
             2. 3.5톤, 5톤, 11톤 등 큰톤수 화물차도 특장을 포함 리스 청구 도와 드립니다.</p>

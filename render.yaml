@@ -14,6 +14,10 @@ services:
         fromDatabase:
           name: truck-lead-db
           property: connectionString
+      - key: ADMIN_USERNAME
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
 
 databases:
   - name: truck-lead-db
