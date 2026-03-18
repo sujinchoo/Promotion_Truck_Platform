@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}관리자 로그인 | TruckLead{% endblock %}
+{% block content %}
+<section class="section compact-section">
+    <div class="container narrow-container">
+        <div class="info-card login-card">
+            <span class="eyebrow">관리자 전용</span>
+            <h2>아이디와 비밀번호를 입력해 주세요</h2>
+            <form class="lead-form login-form" method="post" action="{{ url_for('admin_login', next=request.args.get('next')) }}">
+                <label>아이디
+                    <input type="text" name="username" required>
+                </label>
+                <label>비밀번호
+                    <input type="password" name="password" required>
+                </label>
+                <button type="submit" class="btn btn-primary full">로그인</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

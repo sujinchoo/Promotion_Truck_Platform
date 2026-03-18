@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Truck Lead MVP{% endblock %}</title>
-    <meta name="description" content="신뢰 중심의 화물차 상담 랜딩페이지 MVP">
+    <meta name="description" content="화물 차량 리스/운용리스 상담 랜딩페이지">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
@@ -14,6 +14,7 @@
             <nav>
                 <a href="{{ url_for('index') }}#features">서비스</a>
                 <a href="{{ url_for('index') }}#consult">상담신청</a>
+                <a href="{{ url_for('mobile_landing') }}">모바일 랜딩</a>
                 <a href="{{ url_for('admin') }}">관리자</a>
             </nav>
         </div>

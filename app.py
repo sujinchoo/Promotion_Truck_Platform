@@ -1,4 +1,8 @@
-from flask import Flask, flash, redirect, render_template, request, url_for
+from functools import wraps
+
+from flask import Flask, flash, redirect, render_template, request, session, url_for
+from sqlalchemy import inspect, text
+from sqlalchemy.exc import SQLAlchemyError
 
 from config import Config
 from models import Lead, db
@@ -9,41 +13,96 @@ app.config.from_object(Config)
 db.init_app(app)
 
 
-@app.before_request
-def create_tables():
-    db.create_all()
+LEAD_COLUMNS = {
+    "created_at": "TIMESTAMP",
+    "landing_page": "VARCHAR(50) DEFAULT 'main' NOT NULL",
+    "name": "VARCHAR(100)",
+    "phone": "VARCHAR(30)",
+    "region": "VARCHAR(100)",
+    "business_type": "VARCHAR(100)",
+    "vehicle_type": "VARCHAR(100)",
+    "budget": "VARCHAR(100)",
+    "contact_time": "VARCHAR(100)",
+    "message": "TEXT",
+    "status": "VARCHAR(50) DEFAULT 'new' NOT NULL",
+    "utm_source": "VARCHAR(100)",
+    "utm_medium": "VARCHAR(100)",
+    "utm_campaign": "VARCHAR(100)",
+    "referrer": "VARCHAR(255)",
+    "ip_address": "VARCHAR(64)",
+}
+
+
+REQUIRED_FIELDS = ["name", "phone", "region", "business_type", "vehicle_type"]
+
+
+MOBILE_VEHICLE_OPTIONS = [
+    "1톤 카고",
+    "1톤 냉동탑차",
+    "2.5톤 / 3.5톤 화물차",
+    "영업용 번호판 상담",
+    "법인·개인사업자 운용리스",
+]
+
+
+def ensure_database_schema():
+    with app.app_context():
+        try:
+            db.create_all()
+            inspector = inspect(db.engine)
+            if "leads" not in inspector.get_table_names():
+                db.create_all()
+                return
+
+            existing_columns = {column["name"] for column in inspector.get_columns("leads")}
+            for column_name, column_definition in LEAD_COLUMNS.items():
+                if column_name not in existing_columns:
+                    db.session.execute(text(f"ALTER TABLE leads ADD COLUMN {column_name} {column_definition}"))
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            app.logger.warning("Database schema initialization skipped because the database connection is unavailable.")
+
+
+ensure_database_schema()
+
+
+def admin_required(view_func):
+    @wraps(view_func)
+    def wrapped_view(*args, **kwargs):
+        if not session.get("admin_authenticated"):
+            return redirect(url_for("admin_login", next=request.path))
+        return view_func(*args, **kwargs)
+
+    return wrapped_view
 
 
 @app.route("/")
 def index():
-    vehicle_options = [
-        "봉고3 전기차",
-        "1톤 카고",
-        "1톤 냉동탑차",
-        "LPG 화물차",
-        "법인/리스 상담",
-    ]
-    return render_template("index.html", vehicle_options=vehicle_options)
+    return render_template("index.html", vehicle_options=MOBILE_VEHICLE_OPTIONS)
+
+
+@app.route("/mobile")
+def mobile_landing():
+    return render_template("mobile.html", vehicle_options=MOBILE_VEHICLE_OPTIONS)
 
 
 @app.route("/lead", methods=["POST"])
 def create_lead():
-    name = request.form.get("name", "").strip()
-    phone = request.form.get("phone", "").strip()
-    region = request.form.get("region", "").strip()
-    business_type = request.form.get("business_type", "").strip()
-    vehicle_type = request.form.get("vehicle_type", "").strip()
+    form_data = {field: request.form.get(field, "").strip() for field in REQUIRED_FIELDS}
 
-    if not all([name, phone, region, business_type, vehicle_type]):
+    if not all(form_data.values()):
         flash("필수 항목을 모두 입력해 주세요.", "error")
-        return redirect(url_for("index"))
+        destination = "mobile_landing" if request.form.get("landing_page") == "mobile_ad" else "index"
+        return redirect(url_for(destination) + "#consult")
 
     lead = Lead(
-        name=name,
-        phone=phone,
-        region=region,
-        business_type=business_type,
-        vehicle_type=vehicle_type,
+        landing_page=request.form.get("landing_page", "main").strip() or "main",
+        name=form_data["name"],
+        phone=form_data["phone"],
+        region=form_data["region"],
+        business_type=form_data["business_type"],
+        vehicle_type=form_data["vehicle_type"],
         budget=request.form.get("budget", "").strip(),
         contact_time=request.form.get("contact_time", "").strip(),
         message=request.form.get("message", "").strip(),
@@ -64,16 +123,42 @@ def thank_you():
     return render_template("thank_you.html")
 
 
+@app.route("/admin/login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+
+        if username == app.config["ADMIN_USERNAME"] and password == app.config["ADMIN_PASSWORD"]:
+            session["admin_authenticated"] = True
+            flash("관리자 인증이 완료되었습니다.", "success")
+            return redirect(request.args.get("next") or url_for("admin"))
+
+        flash("아이디 또는 비밀번호가 올바르지 않습니다.", "error")
+
+    return render_template("admin_login.html")
+
+
+@app.route("/admin/logout")
+def admin_logout():
+    session.pop("admin_authenticated", None)
+    flash("관리자 세션이 종료되었습니다.", "success")
+    return redirect(url_for("admin_login"))
+
+
 @app.route("/admin")
+@admin_required
 def admin():
     leads = Lead.query.order_by(Lead.created_at.desc()).all()
     total_leads = len(leads)
     new_leads = sum(1 for lead in leads if lead.status == "new")
+    mobile_leads = sum(1 for lead in leads if lead.landing_page == "mobile_ad")
     return render_template(
         "admin.html",
         leads=leads,
         total_leads=total_leads,
         new_leads=new_leads,
+        mobile_leads=mobile_leads,
     )
 
 

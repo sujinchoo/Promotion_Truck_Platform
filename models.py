@@ -11,6 +11,7 @@ class Lead(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    landing_page = db.Column(db.String(50), default="main", nullable=False)
     name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(30), nullable=False)
     region = db.Column(db.String(100), nullable=False)
@@ -30,6 +31,7 @@ class Lead(db.Model):
         return {
             "id": self.id,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M"),
+            "landing_page": self.landing_page,
             "name": self.name,
             "phone": self.phone,
             "region": self.region,

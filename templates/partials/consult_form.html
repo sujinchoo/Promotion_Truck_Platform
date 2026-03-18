@@ -1,0 +1,41 @@
+<form class="lead-form" method="post" action="{{ url_for('create_lead') }}">
+    <input type="hidden" name="utm_source" value="{{ request.args.get('utm_source', '') }}">
+    <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
+    <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
+    <input type="hidden" name="landing_page" value="{{ landing_page|default('main') }}">
+
+    <label>이름*
+        <input type="text" name="name" placeholder="예: 김기사" required>
+    </label>
+    <label>연락처*
+        <input type="text" name="phone" placeholder="예: 010-1234-5678" required>
+    </label>
+    <label>지역*
+        <input type="text" name="region" placeholder="예: 경기 남양주" required>
+    </label>
+    <label>업종/용도*
+        <input type="text" name="business_type" placeholder="예: 물류, 배송, 개인사업" required>
+    </label>
+    <label>관심 차종*
+        <select name="vehicle_type" required>
+            <option value="">선택해 주세요</option>
+            {% for option in vehicle_options %}
+            <option value="{{ option }}">{{ option }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <label>예산
+        <input type="text" name="budget" placeholder="예: 월 40만~70만원">
+    </label>
+    <label>연락 가능한 시간
+        <input type="text" name="contact_time" placeholder="예: 평일 오후 2시 이후">
+    </label>
+    <label>추가 요청사항
+        <textarea name="message" rows="4" placeholder="원하시는 차량 조건이나 문의 내용을 작성해 주세요"></textarea>
+    </label>
+    <div class="consent-box">
+        <strong>개인정보 수집 안내</strong>
+        <p>상담 요청 접수 및 회신을 위해 정보를 수집합니다. 실제 운영 시 별도의 개인정보처리방침과 동의 문구를 추가하세요.</p>
+    </div>
+    <button type="submit" class="btn btn-primary full">상담 신청하기</button>
+</form>
