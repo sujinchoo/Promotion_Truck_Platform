@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import Flask, abort, flash, redirect, render_template, request, session, url_for
 from sqlalchemy import inspect, text
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -77,19 +77,39 @@ def admin_required(view_func):
     return wrapped_view
 
 
+def render_page(template_name, **context):
+    show_header = context.pop("show_header", True)
+    return render_template(template_name, vehicle_options=MOBILE_VEHICLE_OPTIONS, show_header=show_header, **context)
+
+
 @app.route("/")
 def index():
-    return render_template("index.html", vehicle_options=MOBILE_VEHICLE_OPTIONS)
+    return render_page("index.html")
 
 
 @app.route("/mobile")
 def mobile_landing():
-    return render_template("mobile.html", vehicle_options=MOBILE_VEHICLE_OPTIONS)
+    return render_page("mobile.html", show_header=False)
+
+
+@app.route("/privacy")
+def privacy_policy():
+    return render_page("privacy.html")
+
+
+@app.route("/privacy-consent")
+def privacy_consent():
+    return render_page("privacy_consent.html")
 
 
 @app.route("/lead", methods=["POST"])
 def create_lead():
     form_data = {field: request.form.get(field, "").strip() for field in REQUIRED_FIELDS}
+
+    if not request.form.get("privacy_agree"):
+        flash("개인정보 수집·이용 및 통합 상담 안내에 동의해 주세요.", "error")
+        destination = "mobile_landing" if request.form.get("landing_page") == "mobile_ad" else "index"
+        return redirect(url_for(destination) + "#consult")
 
     if not all(form_data.values()):
         flash("필수 항목을 모두 입력해 주세요.", "error")
@@ -120,11 +140,14 @@ def create_lead():
 
 @app.route("/thank-you")
 def thank_you():
-    return render_template("thank_you.html")
+    return render_page("thank_you.html")
 
 
 @app.route("/admin/login", methods=["GET", "POST"])
 def admin_login():
+    if not app.config["ADMIN_USERNAME"] or not app.config["ADMIN_PASSWORD"]:
+        abort(503, description="관리자 환경 변수가 설정되지 않았습니다.")
+
     if request.method == "POST":
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
@@ -136,7 +159,7 @@ def admin_login():
 
         flash("아이디 또는 비밀번호가 올바르지 않습니다.", "error")
 
-    return render_template("admin_login.html")
+    return render_page("admin_login.html")
 
 
 @app.route("/admin/logout")
@@ -153,7 +176,7 @@ def admin():
     total_leads = len(leads)
     new_leads = sum(1 for lead in leads if lead.status == "new")
     mobile_leads = sum(1 for lead in leads if lead.landing_page == "mobile_ad")
-    return render_template(
+    return render_page(
         "admin.html",
         leads=leads,
         total_leads=total_leads,

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    {% if show_header|default(true) %}
     <header class="site-header">
         <div class="container header-inner">
             <a href="{{ url_for('index') }}" class="brand">TruckLead</a>
@@ -15,10 +16,12 @@
                 <a href="{{ url_for('index') }}#features">서비스</a>
                 <a href="{{ url_for('index') }}#consult">상담신청</a>
                 <a href="{{ url_for('mobile_landing') }}">모바일 랜딩</a>
+                <a href="{{ url_for('privacy_policy') }}">개인정보처리방침</a>
                 <a href="{{ url_for('admin') }}">관리자</a>
             </nav>
         </div>
     </header>
+    {% endif %}
 
     {% with messages = get_flashed_messages(with_categories=true) %}
       {% if messages %}
