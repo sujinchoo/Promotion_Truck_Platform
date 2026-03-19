@@ -1,11 +1,14 @@
 import logging
 from dataclasses import dataclass
+from datetime import timezone
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 import requests
 
 
 logger = logging.getLogger(__name__)
+KOREA_TIMEZONE = ZoneInfo("Asia/Seoul")
 
 
 @dataclass(frozen=True)
@@ -51,7 +54,7 @@ class TelegramNotifier:
     def _build_message(self, lead) -> str:
         safe_message = (lead.message or "-").replace("<", "&lt;").replace(">", "&gt;")
         created_at = getattr(lead, "created_at", None)
-        formatted_created_at = created_at.strftime("%Y-%m-%d %H:%M") if created_at else "-"
+        formatted_created_at = self._format_created_at(created_at)
         return "\n".join(
             [
                 "🚚 <b>신규 화물차 상담 접수</b>",
@@ -69,3 +72,12 @@ class TelegramNotifier:
                 f"⏰ 접수 시간: {formatted_created_at}",
             ]
         )
+    def _format_created_at(self, created_at) -> str:
+        if not created_at:
+            return "-"
+
+        if created_at.tzinfo is None:
+            created_at = created_at.replace(tzinfo=timezone.utc)
+
+        return created_at.astimezone(KOREA_TIMEZONE).strftime("%Y-%m-%d %H:%M")
+
