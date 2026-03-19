@@ -1,11 +1,14 @@
-import json
 import logging
 from dataclasses import dataclass
+from datetime import timezone
 from typing import Optional
-from urllib import error, request
+from zoneinfo import ZoneInfo
+
+import requests
 
 
 logger = logging.getLogger(__name__)
+KOREA_TIMEZONE = ZoneInfo("Asia/Seoul")
 
 
 @dataclass(frozen=True)
@@ -39,33 +42,42 @@ class TelegramNotifier:
             "disable_web_page_preview": True,
         }
         endpoint = f"https://api.telegram.org/bot{self.config.bot_token}/sendMessage"
-        req = request.Request(
-            endpoint,
-            data=json.dumps(payload).encode("utf-8"),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
 
         try:
-            with request.urlopen(req, timeout=5) as response:
-                return 200 <= response.status < 300
-        except error.URLError:
-            logger.exception("Failed to send Telegram notification for lead id=%s", getattr(lead, "id", None))
+            response = requests.post(endpoint, json=payload, timeout=5)
+            response.raise_for_status()
+            return True
+        except requests.RequestException:
+            logger.exception("Failed to send Telegram message for lead id=%s", getattr(lead, "id", None))
             return False
 
     def _build_message(self, lead) -> str:
         safe_message = (lead.message or "-").replace("<", "&lt;").replace(">", "&gt;")
+        created_at = getattr(lead, "created_at", None)
+        formatted_created_at = self._format_created_at(created_at)
         return "\n".join(
             [
-                "<b>새 상담 신청이 등록되었습니다.</b>",
-                f"• 이름: {lead.name}",
-                f"• 연락처: {lead.phone}",
-                f"• 지역: {lead.region}",
-                f"• 업종/용도: {lead.business_type}",
-                f"• 관심 차종: {lead.vehicle_type}",
-                f"• 랜딩 페이지: {lead.landing_page}",
-                f"• 연락 가능 시간: {lead.contact_time or '-'}",
-                f"• 예산: {lead.budget or '-'}",
-                f"• 요청사항: {safe_message}",
+                "🚚 <b>신규 화물차 상담 접수</b>",
+                "",
+                f"👤 이름: {lead.name}",
+                f"📞 연락처: {lead.phone}",
+                f"📍 지역: {lead.region}",
+                f"🏢 업종/용도: {lead.business_type}",
+                f"🚛 관심차종: {lead.vehicle_type}",
+                f"💰 예산: {lead.budget or '-'}",
+                f"🕒 연락 가능 시간: {lead.contact_time or '-'}",
+                f"🌐 랜딩 페이지: {lead.landing_page}",
+                f"📝 요청사항: {safe_message}",
+                "",
+                f"⏰ 접수 시간: {formatted_created_at}",
             ]
         )
+    def _format_created_at(self, created_at) -> str:
+        if not created_at:
+            return "-"
+
+        if created_at.tzinfo is None:
+            created_at = created_at.replace(tzinfo=timezone.utc)
+
+        return created_at.astimezone(KOREA_TIMEZONE).strftime("%Y-%m-%d %H:%M")
+
