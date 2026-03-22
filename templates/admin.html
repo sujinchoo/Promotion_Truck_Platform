@@ -78,8 +78,8 @@
     </div>
 </section>
 
-<div id="delete-confirm-modal" class="modal-backdrop" hidden>
-    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+<div id="delete-confirm-modal" class="modal-backdrop" hidden aria-hidden="true">
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title" tabindex="-1">
         <h3 id="delete-modal-title">삭제 하시겠습니까?</h3>
         <p>한번 삭제 되면 되돌릴 수 없습니다.</p>
         <div class="modal-actions">
@@ -99,18 +99,33 @@
     const cancelDeleteButton = document.getElementById('cancel-delete-button');
     let selectedLeadId = null;
 
+    const deleteModalCard = deleteModal?.querySelector('.modal-card');
+
+    closeDeleteModal();
+
     function syncStatusClass(select) {
         select.className = 'status-select ' + (statusClassMap[select.value] || 'status-new');
     }
 
     function openDeleteModal(leadId) {
+        if (!deleteModal || !leadId) {
+            return;
+        }
+
         selectedLeadId = leadId;
         deleteModal.hidden = false;
+        deleteModal.setAttribute('aria-hidden', 'false');
+        confirmDeleteButton?.focus();
     }
 
     function closeDeleteModal() {
+        if (!deleteModal) {
+            return;
+        }
+
         selectedLeadId = null;
         deleteModal.hidden = true;
+        deleteModal.setAttribute('aria-hidden', 'true');
     }
 
     statusSelects.forEach((select) => {
@@ -127,6 +142,16 @@
         if (event.target === deleteModal) {
             closeDeleteModal();
         }
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && deleteModal && !deleteModal.hidden) {
+            closeDeleteModal();
+        }
+    });
+
+    deleteModalCard?.addEventListener('click', (event) => {
+        event.stopPropagation();
     });
 
     confirmDeleteButton?.addEventListener('click', async () => {
