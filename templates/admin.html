@@ -31,11 +31,11 @@
                         <th>업종</th>
                         <th>차종</th>
                         <th>상태</th>
-                        <th>예산</th>
                         <th>연락시간</th>
                         <th>유입</th>
                         <th>동의</th>
                         <th>메모</th>
+                        <th>삭제</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -59,11 +59,13 @@
                                 {% endfor %}
                             </select>
                         </td>
-                        <td>{{ lead.budget or '-' }}</td>
                         <td>{{ lead.contact_time or '-' }}</td>
                         <td>{{ lead.utm_source or '-' }}/{{ lead.utm_campaign or '-' }}</td>
                         <td>{{ '동의' if lead.agreement else '미동의' }}</td>
                         <td>{{ lead.message or '-' }}</td>
+                        <td>
+                            <button type="button" class="btn btn-secondary delete-lead-button" data-lead-id="{{ lead.id }}">삭제</button>
+                        </td>
                     </tr>
                     {% else %}
                     <tr>
@@ -75,18 +77,85 @@
         </div>
     </div>
 </section>
+
+<div id="delete-confirm-modal" class="modal-backdrop" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="delete-modal-title">
+        <h3 id="delete-modal-title">삭제 하시겠습니까?</h3>
+        <p>한번 삭제 되면 되돌릴 수 없습니다.</p>
+        <div class="modal-actions">
+            <button type="button" class="btn btn-primary" id="confirm-delete-button">확인</button>
+            <button type="button" class="btn btn-secondary" id="cancel-delete-button">취소</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const statusClassMap = {{ status_class_map|tojson }};
     const statusSelects = Array.from(document.querySelectorAll('.status-select'));
     const updateButton = document.getElementById('status-update-button');
+    const deleteButtons = Array.from(document.querySelectorAll('.delete-lead-button'));
+    const deleteModal = document.getElementById('delete-confirm-modal');
+    const confirmDeleteButton = document.getElementById('confirm-delete-button');
+    const cancelDeleteButton = document.getElementById('cancel-delete-button');
+    let selectedLeadId = null;
 
     function syncStatusClass(select) {
         select.className = 'status-select ' + (statusClassMap[select.value] || 'status-new');
     }
 
+    function openDeleteModal(leadId) {
+        selectedLeadId = leadId;
+        deleteModal.hidden = false;
+    }
+
+    function closeDeleteModal() {
+        selectedLeadId = null;
+        deleteModal.hidden = true;
+    }
+
     statusSelects.forEach((select) => {
         syncStatusClass(select);
         select.addEventListener('change', () => syncStatusClass(select));
+    });
+
+    deleteButtons.forEach((button) => {
+        button.addEventListener('click', () => openDeleteModal(button.dataset.leadId));
+    });
+
+    cancelDeleteButton?.addEventListener('click', closeDeleteModal);
+    deleteModal?.addEventListener('click', (event) => {
+        if (event.target === deleteModal) {
+            closeDeleteModal();
+        }
+    });
+
+    confirmDeleteButton?.addEventListener('click', async () => {
+        if (!selectedLeadId) {
+            return;
+        }
+
+        confirmDeleteButton.disabled = true;
+        confirmDeleteButton.textContent = '삭제 중...';
+
+        try {
+            const response = await fetch(`/admin/leads/${selectedLeadId}`, { method: 'DELETE' });
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || '리드 삭제에 실패했습니다.');
+            }
+
+            const row = document.querySelector(`[data-lead-row="${selectedLeadId}"]`);
+            row?.remove();
+            closeDeleteModal();
+            window.alert(data.message || '리드가 삭제되었습니다.');
+            window.location.reload();
+        } catch (error) {
+            window.alert(error.message || '리드 삭제 중 오류가 발생했습니다.');
+        } finally {
+            confirmDeleteButton.disabled = false;
+            confirmDeleteButton.textContent = '확인';
+        }
     });
 
     updateButton?.addEventListener('click', async () => {

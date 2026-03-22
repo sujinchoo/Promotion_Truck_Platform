@@ -253,3 +253,36 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
 .status-unreachable { color: #6b7280; background: #f1f5f9; border-color: #cbd5e1; }
 .status-rejected { color: #b42318; background: #fee4e2; border-color: #f4b4ae; }
 .status-contracted { color: #027a48; background: #dcfae6; border-color: #9be7b5; }
+
+
+.modal-backdrop {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(15, 23, 42, 0.45);
+    z-index: 40;
+}
+.modal-card {
+    width: min(100%, 420px);
+    padding: 28px;
+    border-radius: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+.modal-card h3 {
+    margin: 0 0 10px;
+}
+.modal-card p {
+    margin: 0;
+    color: var(--muted);
+}
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+}
