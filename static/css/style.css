@@ -255,6 +255,10 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
 .status-contracted { color: #027a48; background: #dcfae6; border-color: #9be7b5; }
 
 
+.modal-backdrop[hidden] {
+    display: none !important;
+}
+
 .modal-backdrop {
     position: fixed;
     inset: 0;
