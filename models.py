@@ -22,7 +22,6 @@ class Lead(db.Model):
     region = db.Column(db.String(100), nullable=False)
     business_type = db.Column(db.String(100), nullable=False)
     vehicle_type = db.Column(db.String(100), nullable=False)
-    budget = db.Column(db.String(100), nullable=True)
     contact_time = db.Column(db.String(100), nullable=True)
     message = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(50), default="신규", nullable=False)
@@ -43,7 +42,6 @@ class Lead(db.Model):
             "region": self.region,
             "business_type": self.business_type,
             "vehicle_type": self.vehicle_type,
-            "budget": self.budget,
             "contact_time": self.contact_time,
             "message": self.message,
             "status": self.status,

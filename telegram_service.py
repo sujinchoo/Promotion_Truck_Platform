@@ -64,7 +64,6 @@ class TelegramNotifier:
                 f"📍 지역: {lead.region}",
                 f"🏢 업종/용도: {lead.business_type}",
                 f"🚛 관심차종: {lead.vehicle_type}",
-                f"💰 예산: {lead.budget or '-'}",
                 f"🕒 연락 가능 시간: {lead.contact_time or '-'}",
                 f"🌐 랜딩 페이지: {lead.landing_page}",
                 f"📝 요청사항: {safe_message}",
@@ -72,6 +71,7 @@ class TelegramNotifier:
                 f"⏰ 접수 시간: {formatted_created_at}",
             ]
         )
+
     def _format_created_at(self, created_at) -> str:
         if not created_at:
             return "-"

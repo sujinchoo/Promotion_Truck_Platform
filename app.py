@@ -37,7 +37,6 @@ LEAD_COLUMNS = {
     "region": "VARCHAR(100)",
     "business_type": "VARCHAR(100)",
     "vehicle_type": "VARCHAR(100)",
-    "budget": "VARCHAR(100)",
     "contact_time": "VARCHAR(100)",
     "message": "TEXT",
     "status": "VARCHAR(50) DEFAULT '신규' NOT NULL",
@@ -50,12 +49,30 @@ LEAD_COLUMNS = {
 }
 REQUIRED_FIELDS = ["name", "phone", "region", "business_type", "vehicle_type"]
 MOBILE_VEHICLE_OPTIONS = [
-    "1톤 카고",
+    "1톤 내장탑",
     "1톤 냉동탑차",
     "2.5톤 / 3.5톤 화물차",
     "영업용 번호판 상담",
     "법인·개인사업자 운용리스",
 ]
+
+
+def drop_budget_column_if_present():
+    with app.app_context():
+        try:
+            inspector = inspect(db.engine)
+            if "leads" not in inspector.get_table_names():
+                return
+
+            existing_columns = {column["name"] for column in inspector.get_columns("leads")}
+            if "budget" not in existing_columns:
+                return
+
+            db.session.execute(text("ALTER TABLE leads DROP COLUMN budget"))
+            db.session.commit()
+        except SQLAlchemyError:
+            db.session.rollback()
+            app.logger.warning("Budget column drop skipped because the database connection is unavailable.")
 
 
 def ensure_database_schema():
@@ -80,6 +97,7 @@ def ensure_database_schema():
 
 
 ensure_database_schema()
+drop_budget_column_if_present()
 
 
 @app.context_processor
@@ -152,7 +170,6 @@ def create_lead():
         region=form_data["region"],
         business_type=form_data["business_type"],
         vehicle_type=form_data["vehicle_type"],
-        budget=request.form.get("budget", "").strip(),
         contact_time=request.form.get("contact_time", "").strip(),
         message=request.form.get("message", "").strip(),
         status="신규",
@@ -215,7 +232,6 @@ def admin():
                 Lead.region,
                 Lead.business_type,
                 Lead.vehicle_type,
-                Lead.budget,
                 Lead.contact_time,
                 Lead.utm_source,
                 Lead.utm_campaign,
@@ -267,6 +283,23 @@ def update_lead_statuses():
         return jsonify({"message": "상태 저장 중 오류가 발생했습니다."}), 500
 
     return jsonify({"message": "업데이트 완료", "updated_ids": updated_ids})
+
+
+@app.route("/admin/leads/<int:lead_id>", methods=["DELETE"])
+@admin_required
+def delete_lead(lead_id):
+    lead = db.session.get(Lead, lead_id)
+    if not lead:
+        return jsonify({"message": "삭제할 리드를 찾을 수 없습니다."}), 404
+
+    try:
+        db.session.delete(lead)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return jsonify({"message": "리드 삭제 중 오류가 발생했습니다."}), 500
+
+    return jsonify({"message": "리드가 삭제되었습니다.", "deleted_id": lead_id})
 
 
 @app.route("/health")
