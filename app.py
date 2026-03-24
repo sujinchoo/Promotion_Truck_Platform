@@ -35,9 +35,7 @@ LEAD_COLUMNS = {
     "name": "VARCHAR(100)",
     "phone": "VARCHAR(30)",
     "region": "VARCHAR(100)",
-    "business_type": "VARCHAR(100)",
     "vehicle_type": "VARCHAR(100)",
-    "contact_time": "VARCHAR(100)",
     "message": "TEXT",
     "status": "VARCHAR(50) DEFAULT '신규' NOT NULL",
     "utm_source": "VARCHAR(100)",
@@ -47,7 +45,7 @@ LEAD_COLUMNS = {
     "ip_address": "VARCHAR(64)",
     "agreement": "BOOLEAN DEFAULT FALSE NOT NULL",
 }
-REQUIRED_FIELDS = ["name", "phone", "region", "business_type", "vehicle_type"]
+REQUIRED_FIELDS = ["name", "phone", "region", "vehicle_type"]
 MOBILE_VEHICLE_OPTIONS = [
     "1톤 내장탑",
     "1톤 냉동탑차",
@@ -57,7 +55,7 @@ MOBILE_VEHICLE_OPTIONS = [
 ]
 
 
-def drop_budget_column_if_present():
+def drop_deprecated_columns_if_present():
     with app.app_context():
         try:
             inspector = inspect(db.engine)
@@ -65,14 +63,15 @@ def drop_budget_column_if_present():
                 return
 
             existing_columns = {column["name"] for column in inspector.get_columns("leads")}
-            if "budget" not in existing_columns:
-                return
+            deprecated_columns = ["budget", "business_type", "contact_time"]
+            for column_name in deprecated_columns:
+                if column_name in existing_columns:
+                    db.session.execute(text(f"ALTER TABLE leads DROP COLUMN {column_name}"))
 
-            db.session.execute(text("ALTER TABLE leads DROP COLUMN budget"))
             db.session.commit()
         except SQLAlchemyError:
             db.session.rollback()
-            app.logger.warning("Budget column drop skipped because the database connection is unavailable.")
+            app.logger.warning("Deprecated column drop skipped because the database connection is unavailable.")
 
 
 def ensure_database_schema():
@@ -97,7 +96,7 @@ def ensure_database_schema():
 
 
 ensure_database_schema()
-drop_budget_column_if_present()
+drop_deprecated_columns_if_present()
 
 
 @app.context_processor
@@ -168,9 +167,7 @@ def create_lead():
         name=form_data["name"],
         phone=form_data["phone"],
         region=form_data["region"],
-        business_type=form_data["business_type"],
         vehicle_type=form_data["vehicle_type"],
-        contact_time=request.form.get("contact_time", "").strip(),
         message=request.form.get("message", "").strip(),
         status="신규",
         utm_source=request.form.get("utm_source", "").strip(),
@@ -230,9 +227,7 @@ def admin():
                 Lead.name,
                 Lead.phone,
                 Lead.region,
-                Lead.business_type,
                 Lead.vehicle_type,
-                Lead.contact_time,
                 Lead.utm_source,
                 Lead.utm_campaign,
                 Lead.agreement,
