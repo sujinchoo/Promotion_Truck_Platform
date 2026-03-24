@@ -13,9 +13,6 @@
     <label>지역*
         <input type="text" name="region" placeholder="예: 경기 남양주" required>
     </label>
-    <label>업종/용도*
-        <input type="text" name="business_type" placeholder="예: 물류, 배송, 개인사업" required>
-    </label>
     <label>관심 차종*
         <select name="vehicle_type" required>
             <option value="">선택해 주세요</option>
@@ -23,9 +20,6 @@
             <option value="{{ option }}">{{ option }}</option>
             {% endfor %}
         </select>
-    </label>
-    <label>연락 가능한 시간
-        <input type="text" name="contact_time" placeholder="예: 평일 오후 2시 이후">
     </label>
     <label>추가 요청사항
         <textarea name="message" rows="4" placeholder="원하시는 차량 조건이나 문의 내용을 작성해 주세요"></textarea>

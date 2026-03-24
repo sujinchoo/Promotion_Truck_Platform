@@ -20,9 +20,7 @@ class Lead(db.Model):
     name = db.Column(db.String(100), nullable=False)
     phone = db.Column(db.String(30), nullable=False)
     region = db.Column(db.String(100), nullable=False)
-    business_type = db.Column(db.String(100), nullable=False)
     vehicle_type = db.Column(db.String(100), nullable=False)
-    contact_time = db.Column(db.String(100), nullable=True)
     message = db.Column(db.Text, nullable=True)
     status = db.Column(db.String(50), default="신규", nullable=False)
     utm_source = db.Column(db.String(100), nullable=True)
@@ -40,9 +38,7 @@ class Lead(db.Model):
             "name": self.name,
             "phone": self.phone,
             "region": self.region,
-            "business_type": self.business_type,
             "vehicle_type": self.vehicle_type,
-            "contact_time": self.contact_time,
             "message": self.message,
             "status": self.status,
             "utm_source": self.utm_source,
