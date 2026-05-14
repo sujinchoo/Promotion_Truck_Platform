@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}테슬라 리스 상담요청 | TruckLead{% endblock %}
+{% block content %}
+<section class="hero mobile-hero compact-hero mobile-landing-shell">
+    <div class="container narrow-container">
+        <div class="mobile-top-banner" role="img" aria-label="테슬라 리스 상담 배너">
+            <img src="{{ url_for('static', filename='images/teslabanner.png') }}" alt="테슬라 리스 상담 배너" loading="eager">
+        </div>
+    </div>
+</section>
+
+<section id="consult" class="section consult-section compact-section mobile-consult">
+    <div class="container narrow-container consult-grid single-column">
+        {% with landing_page='tesla_ad' %}
+            {% include "partials/tesla_consult_form.html" %}
+        {% endwith %}
+    </div>
+</section>
+{% endblock %}

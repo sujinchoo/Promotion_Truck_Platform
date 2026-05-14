@@ -125,7 +125,11 @@ def render_page(template_name, **context):
 
 
 def resolve_destination(landing_page):
-    return "mobile_landing" if landing_page == "mobile_ad" else "index"
+    if landing_page == "mobile_ad":
+        return "mobile_landing"
+    if landing_page == "tesla_ad":
+        return "tesla_landing"
+    return "index"
 
 
 @app.route("/")
@@ -136,6 +140,11 @@ def index():
 @app.route("/mobile")
 def mobile_landing():
     return render_page("mobile.html", show_header=False)
+
+
+@app.route("/tesla")
+def tesla_landing():
+    return render_page("tesla_mobile.html", show_header=False)
 
 
 @app.route("/privacy")
@@ -152,7 +161,8 @@ def privacy_consent():
 def create_lead():
     landing_page = request.form.get("landing_page", "main").strip() or "main"
     destination = resolve_destination(landing_page)
-    form_data = {field: request.form.get(field, "").strip() for field in REQUIRED_FIELDS}
+    required_fields = ["name", "phone", "vehicle_type"] if landing_page == "tesla_ad" else REQUIRED_FIELDS
+    form_data = {field: request.form.get(field, "").strip() for field in required_fields}
 
     if not request.form.get("privacy_agree"):
         flash("개인정보 수집·이용 및 통합 상담 안내에 동의해 주세요.", "error")
@@ -166,7 +176,7 @@ def create_lead():
         landing_page=landing_page,
         name=form_data["name"],
         phone=form_data["phone"],
-        region=form_data["region"],
+        region=request.form.get("region", "").strip() or "테슬라 랜딩페이지",
         vehicle_type=form_data["vehicle_type"],
         message=request.form.get("message", "").strip(),
         status="신규",
