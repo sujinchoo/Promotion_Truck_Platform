@@ -49,6 +49,7 @@ REQUIRED_FIELDS = ["name", "phone", "region", "vehicle_type"]
 MOBILE_VEHICLE_OPTIONS = [
     "1톤 내장탑",
     "1톤 냉동탑차",
+    "1톤 봉고 카고",
     "2.5톤 / 3.5톤 화물차",
     "영업용 번호판 상담",
     "법인·개인사업자 운용리스",
