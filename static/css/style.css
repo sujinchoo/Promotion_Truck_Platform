@@ -272,6 +272,10 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
     grid-template-columns: 1fr;
     gap: 10px;
 }
+.tesla-simple-form .lease-choice .choice-options,
+.tesla-simple-form .model-choice .choice-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
 .tesla-simple-form .choice-option {
     display: flex;
     align-items: center;
