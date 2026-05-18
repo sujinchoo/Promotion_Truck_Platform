@@ -204,10 +204,97 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
     box-shadow: 0 18px 40px rgba(19, 88, 182, 0.18);
     background: #ffffff;
 }
+.mobile-banner-title {
+    width: min(100%, 560px);
+    margin: 0 auto 14px;
+    padding: 10px 14px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 800;
+    font-size: clamp(1rem, 3.2vw, 1.2rem);
+    letter-spacing: -0.01em;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1358b6 0%, #2d76d1 100%);
+    box-shadow: 0 10px 24px rgba(19, 88, 182, 0.2);
+}
 
 .mobile-consult .lead-form {
     width: min(100%, 560px);
     margin: 0 auto;
+}
+
+.tesla-simple-form {
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    padding: 22px;
+    border-radius: 18px;
+}
+.tesla-simple-form .form-head,
+.tesla-simple-form .wide {
+    grid-column: 1 / -1;
+}
+.tesla-simple-form .form-head h2 {
+    margin: 0;
+    font-size: clamp(1.25rem, 3.8vw, 1.6rem);
+    line-height: 1.35;
+}
+.tesla-simple-form .form-head p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+.tesla-simple-form label {
+    font-size: 0.95rem;
+}
+.tesla-simple-form input,
+.tesla-simple-form select,
+.tesla-simple-form textarea {
+    background: #fff;
+}
+.tesla-simple-form .consent-box {
+    padding: 14px;
+}
+.tesla-simple-form .consent-box p {
+    margin: 8px 0 0;
+    font-size: 0.9rem;
+}
+.tesla-simple-form .lease-choice,
+.tesla-simple-form .model-choice {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+.tesla-simple-form .lease-choice legend,
+.tesla-simple-form .model-choice legend {
+    margin-bottom: 8px;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+.tesla-simple-form .choice-options {
+    display: grid;
+    gap: 10px;
+}
+.tesla-simple-form .choice-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    background: #fff;
+    cursor: pointer;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+.tesla-simple-form .choice-option:hover {
+    border-color: #a8c4ea;
+}
+.tesla-simple-form .choice-option input[type="radio"] {
+    margin: 0;
+    accent-color: var(--primary);
+}
+.tesla-simple-form .choice-option:has(input[type="radio"]:checked) {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(19, 88, 182, 0.12);
 }
 .mobile-top-banner img {
     display: block;
@@ -256,6 +343,10 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
     }
     .row-between, .header-inner, .header-actions { flex-direction: column; align-items: flex-start; }
     .hero { padding-top: 48px; }
+    .tesla-simple-form {
+        grid-template-columns: 1fr;
+        padding: 18px;
+    }
 }
 
 
