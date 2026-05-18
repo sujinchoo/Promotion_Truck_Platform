@@ -36,6 +36,7 @@ LEAD_COLUMNS = {
     "phone": "VARCHAR(30)",
     "region": "VARCHAR(100)",
     "vehicle_type": "VARCHAR(100)",
+    "lease_type": "VARCHAR(30)",
     "message": "TEXT",
     "status": "VARCHAR(50) DEFAULT '신규' NOT NULL",
     "utm_source": "VARCHAR(100)",
@@ -133,6 +134,14 @@ def resolve_destination(landing_page):
     return "index"
 
 
+def resolve_thank_you_return_endpoint(source):
+    if source == "mobile_ad":
+        return "mobile_landing"
+    if source == "tesla_ad":
+        return "tesla_landing"
+    return "index"
+
+
 @app.route("/")
 def index():
     return render_page("index.html")
@@ -173,12 +182,15 @@ def create_lead():
         flash("필수 항목을 모두 입력해 주세요.", "error")
         return redirect(url_for(destination) + "#consult")
 
+    lease_type = request.form.get("lease_type", "").strip()
+
     lead = Lead(
         landing_page=landing_page,
         name=form_data["name"],
         phone=form_data["phone"],
         region=request.form.get("region", "").strip() or "테슬라 랜딩페이지",
         vehicle_type=form_data["vehicle_type"],
+        lease_type=lease_type or None,
         message=request.form.get("message", "").strip(),
         status="신규",
         utm_source=request.form.get("utm_source", "").strip(),
@@ -188,16 +200,25 @@ def create_lead():
         ip_address=request.headers.get("X-Forwarded-For", request.remote_addr),
         agreement=request.form.get("privacy_agree") == "yes",
     )
-    db.session.add(lead)
-    db.session.commit()
+    try:
+        db.session.add(lead)
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        app.logger.exception("Failed to save lead data.")
+        flash("접수 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.", "error")
+        return redirect(url_for(destination) + "#consult")
+
     telegram_notifier.send_new_lead_notification(lead)
 
-    return redirect(url_for("thank_you"))
+    return redirect(url_for("thank_you", source=landing_page))
 
 
 @app.route("/thank-you")
 def thank_you():
-    return render_page("thank_you.html")
+    source = (request.args.get("source") or "").strip()
+    return_endpoint = resolve_thank_you_return_endpoint(source)
+    return render_page("thank_you.html", return_endpoint=return_endpoint)
 
 
 @app.route("/admin/login", methods=["GET", "POST"])
@@ -239,6 +260,7 @@ def admin():
                 Lead.phone,
                 Lead.region,
                 Lead.vehicle_type,
+                Lead.lease_type,
                 Lead.utm_source,
                 Lead.utm_campaign,
                 Lead.agreement,
