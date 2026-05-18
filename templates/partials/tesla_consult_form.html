@@ -1,38 +1,62 @@
-<form class="lead-form" method="post" action="{{ url_for('create_lead') }}">
+<form class="lead-form tesla-simple-form" method="post" action="{{ url_for('create_lead') }}">
     <input type="hidden" name="utm_source" value="{{ request.args.get('utm_source', '') }}">
     <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
     <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
     <input type="hidden" name="landing_page" value="{{ landing_page|default('tesla_ad') }}">
     <input type="hidden" name="region" value="테슬라 랜딩페이지">
 
-    <label>성함*
+    <div class="form-head">
+        <h2>법인/사업자 맞춤형 리스 상담 신청</h2>
+        <p>필수 항목을 입력해 주시면 빠르게 연락드립니다.</p>
+    </div>
+
+    <label>성함 (필수)
         <input type="text" name="name" placeholder="예: 홍길동" required>
     </label>
-    <label>연락처*
+    <label>연락처 (필수)
         <input type="text" name="phone" placeholder="예: 010-1234-5678" required>
     </label>
-    <label>리스 요청 모델*
-        <select name="vehicle_type" required>
-            <option value="">선택해 주세요</option>
-            <option value="모델 3">모델 3</option>
-            <option value="모델 Y">모델 Y</option>
-            <option value="모델 S">모델 S</option>
-            <option value="모델 X">모델 X</option>
-            <option value="사이버트럭">사이버트럭</option>
-            <option value="상담 후 결정">상담 후 결정</option>
-        </select>
+
+    <fieldset class="lease-choice">
+        <legend>리스 유형</legend>
+        <div class="choice-options" role="radiogroup" aria-label="리스 유형">
+            <label class="choice-option" for="lease-buyout">
+                <input id="lease-buyout" type="radio" name="lease_type" value="인수형">
+                <span>인수형</span>
+            </label>
+            <label class="choice-option" for="lease-return">
+                <input id="lease-return" type="radio" name="lease_type" value="반납형">
+                <span>반납형</span>
+            </label>
+        </div>
+    </fieldset>
+
+    <fieldset class="model-choice wide">
+        <legend>리스 요청 모델 (필수)</legend>
+        <div class="choice-options" role="radiogroup" aria-label="리스 요청 모델">
+            <label class="choice-option" for="model-awd">
+                <input id="model-awd" type="radio" name="vehicle_type" value="사이버 트럭 AWD" required>
+                <span>사이버 트럭 AWD</span>
+            </label>
+            <label class="choice-option" for="model-beast">
+                <input id="model-beast" type="radio" name="vehicle_type" value="사이버 트럭 BEAST" required>
+                <span>사이버 트럭 BEAST</span>
+            </label>
+        </div>
+    </fieldset>
+
+    <label class="wide">요청사항 (선택)
+        <textarea name="message" rows="4" placeholder="예) 36개월, 연 2만KM, 보증금 선납 30%, 50 등"></textarea>
     </label>
-    <label>추가요청 사항
-        <textarea name="message" rows="4" placeholder="문의하실 내용을 남겨 주세요"></textarea>
-    </label>
-    <div class="consent-box">
+
+    <div class="consent-box wide">
         <strong>개인정보 수집·이용 및 통합 상담 안내</strong>
-        <p>본 상담 신청은 (주)씨앤제이컴퍼니를 통하여 진행되며, 입력된 데이터는 상담 진행과 후속 관리 목적으로만 사용됩니다. 상담 신청 데이터는 자동 저장·관리·취급됩니다.</p>
-        <p>동일한 회사 직원이 차량상담, 특장상담, 보험견적 등 통합 상담을 진행하기 위해 개인정보가 제3자에게 제공될 수 있습니다. 자세한 내용은 <a href="{{ url_for('privacy_policy') }}">개인정보처리방침</a> 및 <a href="{{ url_for('privacy_consent') }}">개인정보 수집·이용 안내</a>에서 확인해 주세요.</p>
+        <p>본 상담 신청은 (주)씨앤제이컴퍼니를 통하여 진행되며, 입력된 데이터는 상담 진행과 후속 관리 목적으로만 사용됩니다.</p>
         <label class="consent-check">
             <input type="checkbox" name="privacy_agree" value="yes" required>
             <span>내용에 동의함</span>
         </label>
     </div>
-    <button type="submit" class="btn btn-primary full">상담 신청하기</button>
+
+    <button type="submit" class="btn btn-primary full wide">상담 신청하기</button>
 </form>
