@@ -193,7 +193,7 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
 .stacked-mobile-actions, .full-mobile { width: 100%; }
 .mobile-hero .hero-actions { flex-direction: column; }
 .mobile-landing-shell {
-    background: radial-gradient(circle at top, rgba(19, 88, 182, 0.18), transparent 42%), linear-gradient(180deg, #f7fbff 0%, #e8f1ff 100%);
+    background: transparent;
 }
 .mobile-top-banner {
     width: min(100%, 560px);
@@ -206,16 +206,13 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
 }
 .mobile-banner-title {
     width: min(100%, 560px);
-    margin: 0 auto 14px;
-    padding: 10px 14px;
-    border-radius: 12px;
+    margin: 0 auto 12px;
+    padding: 0;
     text-align: center;
     font-weight: 800;
-    font-size: clamp(1rem, 3.2vw, 1.2rem);
-    letter-spacing: -0.01em;
-    color: #ffffff;
-    background: linear-gradient(135deg, #1358b6 0%, #2d76d1 100%);
-    box-shadow: 0 10px 24px rgba(19, 88, 182, 0.2);
+    font-size: clamp(1.08rem, 3.4vw, 1.28rem);
+    letter-spacing: -0.015em;
+    color: #101418;
 }
 
 .mobile-consult .lead-form {
@@ -273,6 +270,10 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
 .tesla-simple-form .choice-options {
     display: grid;
     gap: 10px;
+}
+.tesla-simple-form .lease-choice .choice-options,
+.tesla-simple-form .model-choice .choice-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 .tesla-simple-form .choice-option {
     display: flex;
