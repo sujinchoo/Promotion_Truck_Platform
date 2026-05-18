@@ -206,13 +206,41 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
 }
 .mobile-banner-title {
     width: min(100%, 560px);
-    margin: 0 auto 12px;
-    padding: 0;
+    margin: 0 auto 16px;
+    padding: 18px 18px 16px;
     text-align: center;
-    font-weight: 800;
-    font-size: clamp(1.08rem, 3.4vw, 1.28rem);
-    letter-spacing: -0.015em;
+    border: 1px solid rgba(19, 88, 182, 0.16);
+    border-radius: 18px;
+    background: linear-gradient(180deg, #ffffff 0%, #f2f7ff 100%);
+    box-shadow: 0 12px 30px rgba(19, 88, 182, 0.12);
+}
+
+.mobile-banner-title h1 {
+    margin: 8px 0 0;
+    font-size: clamp(1.15rem, 4vw, 1.56rem);
+    line-height: 1.35;
+    letter-spacing: -0.02em;
     color: #101418;
+}
+
+.mobile-banner-title p {
+    margin: 8px 0 0;
+    font-size: 0.92rem;
+    color: #4f6277;
+    line-height: 1.5;
+}
+
+.mobile-banner-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: #e8f3ff;
+    color: #0d3f86;
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
 }
 
 .mobile-consult .lead-form {
@@ -258,14 +286,17 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
 .tesla-simple-form .lease-choice,
 .tesla-simple-form .model-choice {
     margin: 0;
-    padding: 0;
-    border: 0;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
 }
 .tesla-simple-form .lease-choice legend,
 .tesla-simple-form .model-choice legend {
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     font-weight: 700;
     font-size: 0.95rem;
+    padding: 0;
 }
 .tesla-simple-form .choice-options {
     display: grid;
@@ -281,9 +312,9 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
     align-items: center;
     gap: 10px;
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 12px 14px;
-    background: #fff;
+    border-radius: 10px;
+    padding: 11px 12px;
+    background: #fbfdff;
     cursor: pointer;
     transition: border-color .2s ease, box-shadow .2s ease;
 }
@@ -348,6 +379,13 @@ nav { display: flex; gap: 18px; color: var(--muted); font-weight: 600; flex-wrap
     .tesla-simple-form {
         grid-template-columns: 1fr;
         padding: 18px;
+    }
+    .mobile-banner-title {
+        padding: 16px 14px 14px;
+        margin-bottom: 14px;
+    }
+    .mobile-banner-title h1 {
+        font-size: clamp(1.08rem, 5vw, 1.32rem);
     }
 }
 
