@@ -63,6 +63,7 @@ class TelegramNotifier:
                 f"📞 연락처: {lead.phone}",
                 f"📍 지역: {lead.region}",
                 f"🚛 관심차종: {lead.vehicle_type}",
+                f"📄 리스 유형: {getattr(lead, 'lease_type', None) or '-'}",
                 f"🌐 랜딩 페이지: {lead.landing_page}",
                 f"📝 요청사항: {safe_message}",
                 "",
