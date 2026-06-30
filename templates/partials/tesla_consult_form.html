@@ -3,7 +3,7 @@
     <input type="hidden" name="utm_medium" value="{{ request.args.get('utm_medium', '') }}">
     <input type="hidden" name="utm_campaign" value="{{ request.args.get('utm_campaign', '') }}">
     <input type="hidden" name="landing_page" value="{{ landing_page|default('tesla_ad') }}">
-    <input type="hidden" name="region" value="테슬라 랜딩페이지">
+    <input type="hidden" name="region" value="{{ region_label|default('테슬라 랜딩페이지') }}">
 
     <div class="form-head">
         <h2>개인/법인사업자를 위한 리스 상담 신청</h2>
@@ -34,14 +34,12 @@
     <fieldset class="model-choice wide">
         <legend>리스 요청 모델 (필수)</legend>
         <div class="choice-options" role="radiogroup" aria-label="리스 요청 모델">
-            <label class="choice-option" for="model-awd">
-                <input id="model-awd" type="radio" name="vehicle_type" value="사이버 트럭 AWD" required>
-                <span>사이버 트럭 AWD</span>
-            </label>
-            <label class="choice-option" for="model-beast">
-                <input id="model-beast" type="radio" name="vehicle_type" value="사이버 트럭 BEAST" required>
-                <span>사이버 트럭 BEAST</span>
-            </label>
+            {% for option_id, option_label in model_options|default([('model-awd', '사이버 트럭 AWD'), ('model-beast', '사이버 트럭 BEAST')]) %}
+                <label class="choice-option" for="{{ option_id }}">
+                    <input id="{{ option_id }}" type="radio" name="vehicle_type" value="{{ option_label }}" required>
+                    <span>{{ option_label }}</span>
+                </label>
+            {% endfor %}
         </div>
     </fieldset>
 

@@ -55,6 +55,16 @@ MOBILE_VEHICLE_OPTIONS = [
     "영업용 번호판 상담",
     "법인·개인사업자 운용리스",
 ]
+TESLA_LANDING_PAGES = {"tesla_ad", "tesla_model_y_ad"}
+TESLA_MODEL_OPTIONS = [
+    ("model-awd", "사이버 트럭 AWD"),
+    ("model-beast", "사이버 트럭 BEAST"),
+]
+TESLA_MODEL_Y_OPTIONS = [
+    ("model-y", "Model Y"),
+    ("model-y-long-range", "Model Y long range"),
+    ("model-y-l-awd", "Model Y L AWD"),
+]
 
 
 def drop_deprecated_columns_if_present():
@@ -131,6 +141,8 @@ def resolve_destination(landing_page):
         return "mobile_landing"
     if landing_page == "tesla_ad":
         return "tesla_landing"
+    if landing_page == "tesla_model_y_ad":
+        return "tesla_model_y_landing"
     return "index"
 
 
@@ -139,6 +151,8 @@ def resolve_thank_you_return_endpoint(source):
         return "mobile_landing"
     if source == "tesla_ad":
         return "tesla_landing"
+    if source == "tesla_model_y_ad":
+        return "tesla_model_y_landing"
     return "index"
 
 
@@ -154,7 +168,26 @@ def mobile_landing():
 
 @app.route("/tesla")
 def tesla_landing():
-    return render_page("tesla_mobile.html", show_header=False)
+    return render_page(
+        "tesla_mobile.html",
+        show_header=False,
+        banner_image="images/teslabanner.png",
+        landing_page="tesla_ad",
+        model_options=TESLA_MODEL_OPTIONS,
+        region_label="테슬라 랜딩페이지",
+    )
+
+
+@app.route("/teslamodelY")
+def tesla_model_y_landing():
+    return render_page(
+        "tesla_mobile.html",
+        show_header=False,
+        banner_image="images/modelYbanner.png",
+        landing_page="tesla_model_y_ad",
+        model_options=TESLA_MODEL_Y_OPTIONS,
+        region_label="테슬라 Model Y 랜딩페이지",
+    )
 
 
 @app.route("/privacy")
@@ -171,7 +204,7 @@ def privacy_consent():
 def create_lead():
     landing_page = request.form.get("landing_page", "main").strip() or "main"
     destination = resolve_destination(landing_page)
-    required_fields = ["name", "phone", "vehicle_type"] if landing_page == "tesla_ad" else REQUIRED_FIELDS
+    required_fields = ["name", "phone", "vehicle_type"] if landing_page in TESLA_LANDING_PAGES else REQUIRED_FIELDS
     form_data = {field: request.form.get(field, "").strip() for field in required_fields}
 
     if not request.form.get("privacy_agree"):

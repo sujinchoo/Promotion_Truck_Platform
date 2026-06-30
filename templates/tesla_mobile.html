@@ -9,16 +9,14 @@
             <p>필수 정보만 남기면 전담 매니저가 빠르게 상담을 도와드립니다.</p>
         </div>
         <div class="mobile-top-banner" role="img" aria-label="테슬라 리스 상담 배너">
-            <img src="{{ url_for('static', filename='images/teslabanner.png') }}" alt="테슬라 리스 상담 배너" loading="eager">
+            <img src="{{ url_for('static', filename=banner_image|default('images/teslabanner.png')) }}" alt="테슬라 리스 상담 배너" loading="eager">
         </div>
     </div>
 </section>
 
 <section id="consult" class="section consult-section compact-section mobile-consult">
     <div class="container narrow-container consult-grid single-column">
-        {% with landing_page='tesla_ad' %}
-            {% include "partials/tesla_consult_form.html" %}
-        {% endwith %}
+        {% include "partials/tesla_consult_form.html" %}
     </div>
 </section>
 {% endblock %}
